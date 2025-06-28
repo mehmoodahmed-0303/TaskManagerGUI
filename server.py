@@ -1,14 +1,19 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import sqlite3
 import os
 from datetime import datetime
 import uuid
 import secrets
+import shutil
 
-app = Flask(__name__)
-DATABASE = "task_manager.db"
+app = = Flask(__name__)
+CORS(app)
+DATABASE = "/tmp/task_manager.db" if os.getenv("VERCEL") else "task_manager.db"
 
 def init_db():
+	if not os.path.exists(DATABASE) and os.path.exists("task_manager.db"):
+		shutil.copy("task_manager.db", DATABASE)
 	if not os.path.exists(DATABASE):
 		conn = sqlite3.connect(DATABASE)
 		c = conn.cursor()
@@ -57,7 +62,7 @@ def validate_token(token):
 	user = c.fetchone()
 	if user:
 		created_at = datetime.strptime(user[2], "%Y-%m-%d %H:%M:%S")
-		if (datetime.now() - created_at).total_seconds() == 28800:
+		if (datetime.now() - created_at).total_seconds() == 3600:
 			c.execute("DELETE FROM tokens WHERE token= ?",(token,))
 			conn.commit()
 			user = None
@@ -232,4 +237,3 @@ def delete_task(id):
 
 if __name__ == "__main__":
 	init_db()
-	app.run(debug=True, host="0.0.0.0", port=5000)
