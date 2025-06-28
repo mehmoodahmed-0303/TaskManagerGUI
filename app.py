@@ -4,7 +4,7 @@ import requests
 from datetime import datetime
 
 
-API_BASE_URL = "http://localhost:5000"
+API_BASE_URL = "https://task-manager-gui.vercel.app"
 
 class LginWindow:
 	def __init__(self, root, on_success):
