@@ -233,7 +233,3 @@ def delete_task(id):
 	conn.close()
 	return jsonify({"Message":"Task deleted successfuly"}), 200
 
-
-
-if __name__ == "__main__":
-	init_db()
